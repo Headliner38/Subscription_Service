@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres         # логин для подключения к БД
+      POSTGRES_PASSWORD: 3276     # пароль для подключения к БД
+      POSTGRES_DB: subscriptions    # имя создаваемой базы данных
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: 3276
+      DB_NAME: subscriptions
+      APP_PORT: 8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:
