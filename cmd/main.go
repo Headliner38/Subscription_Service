@@ -35,11 +35,11 @@ import (
 func main() {
 	log.Printf("[MAIN] Starting Subscription Service...")
 
-	// Загружаем конфигурацию
+	// Загрузка конфигурацию
 	cfg := config.LoadConfig()
 	log.Printf("[MAIN] Configuration loaded successfully")
 
-	// Подключаемся к БД
+	// Подключение к БД
 	connStr := "host=" + cfg.DBHost + " port=" + cfg.DBPort + " user=" + cfg.DBUser + " password=" + cfg.DBPassword + " dbname=" + cfg.DBName + " sslmode=disable"
 	log.Printf("[MAIN] Connecting to database at %s:%s", cfg.DBHost, cfg.DBPort)
 
@@ -49,7 +49,7 @@ func main() {
 	}
 	defer db.Close()
 
-	// Проверяем подключение
+	// Проверка подключение
 	if err := db.Ping(); err != nil {
 		log.Fatalf("[FATAL] Failed to ping database: %v", err)
 	}
@@ -59,21 +59,21 @@ func main() {
 	subscriptionService := &service.SubscriptionService{DB: db}
 	log.Printf("[MAIN] Services initialized")
 
-	// Настраиваем роутер
-	r := gin.New() // Используем gin.New() вместо gin.Default() для кастомного логирования
+	// роутер
+	r := gin.New() // gin.New() для кастомного логирования
 
-	// Добавляем middleware для логирования
+	// middleware для логирования
 	r.Use(handler.LoggerMiddleware())
-	r.Use(gin.Recovery()) // Добавляем recovery middleware
+	r.Use(gin.Recovery()) // recovery middleware
 
 	handler.SetupRoutes(r, subscriptionService)
 	log.Printf("[MAIN] Routes configured")
 
-	// Добавляем Swagger UI
+	// Swagger UI
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	log.Printf("[MAIN] Swagger UI available at /swagger/index.html")
 
-	// Запускаем сервер
+	// Запуск сервера
 	log.Printf("[MAIN] Server starting on port %s", cfg.AppPort)
 	if err := r.Run(":" + cfg.AppPort); err != nil {
 		log.Fatalf("[FATAL] Failed to start server: %v", err)

@@ -24,7 +24,7 @@ func (s *SubscriptionService) CreateSubscription(
 ) (*model.Subscription, error) {
 	log.Printf("[SERVICE] Creating subscription for user: %s, service: %s, price: %d", userID, serviceName, price)
 
-	// 1. Валидация данных
+	// Валидация данных
 	if serviceName == "" {
 		log.Printf("[ERROR] Service name is required")
 		return nil, errors.New("service name is required")
@@ -38,7 +38,7 @@ func (s *SubscriptionService) CreateSubscription(
 		return nil, errors.New("user_id is required")
 	}
 
-	// 2. Преобразование дат
+	// Преобразование дат
 	startDate, err := time.Parse("01-2006", startDateStr)
 	if err != nil {
 		log.Printf("[ERROR] Invalid start_date format: %s", startDateStr)
@@ -59,14 +59,14 @@ func (s *SubscriptionService) CreateSubscription(
 		}
 	}
 
-	// 3. Генерация UUID
+	// Генерация UUID
 	id := utils.GenerateUUID()
 	log.Printf("[SERVICE] Generated UUID: %s", id)
 
-	// 4. Создание структуры подписки
+	// Создание структуры подписки
 	sub := model.NewSubscription(id, serviceName, price, userID, startDate, endDate)
 
-	// 5. Вызов репозитория для сохранения в БД
+	// Вызов репозитория для сохранения в БД
 	err = repository.CreateSubscription(s.DB, sub.ID, sub.ServiceName, sub.Price, sub.UserID, sub.StartDate, sub.EndDate)
 	if err != nil {
 		log.Printf("[ERROR] Failed to save subscription to DB: %v", err)

@@ -1,4 +1,4 @@
-# Используем официальный образ Go для сборки
+
 FROM golang:1.23-alpine AS builder
 
 # Устанавливаем рабочую директорию
@@ -19,7 +19,7 @@ RUN [ -f .env ] || cp .env.example .env
 # Собираем приложение
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main cmd/main.go
 
-# Используем минимальный образ для запуска
+# минимальный образ для запуска
 FROM alpine:latest
 
 # Устанавливаем ca-certificates для HTTPS запросов
